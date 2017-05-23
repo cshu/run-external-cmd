@@ -15,10 +15,10 @@ func main() {
 	if *hexfl{
 		for i,v:=range sbuf{
 			decres,err:=hex.DecodeString(v)
-			sbuf[i]=string(decres)
 			if err!=nil{
 				panic(1)
 			}
+			sbuf[i]=string(decres)
 		}
 	}
 	cmd := exec.Command(sbuf[0], sbuf[1:]...)
