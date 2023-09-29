@@ -21,7 +21,7 @@ func main() {
 	flag.Parse()
 	if flag.NArg() == 0 {
 		panic(1)
-	} //os.exit(1) might be okay when there is no deferred func
+	}
 	sbuf := flag.Args()
 	if *hexfl {
 		for i, v := range sbuf {
@@ -42,13 +42,13 @@ func main() {
 	if *coutfl {
 		stdout, err = cmd.StdoutPipe()
 		if err != nil {
-			panic(err) //you don't have deferred func in this program so it's fine
+			panic(err)
 		}
 	}
 	if *cerrfl {
 		stderr, err = cmd.StderrPipe()
 		if err != nil {
-			panic(err) //you don't have deferred func in this program so it's fine
+			panic(err)
 		}
 	}
 	err = cmd.Start()
@@ -62,7 +62,7 @@ func main() {
 			defer wg.Done()
 			_, err := io.Copy(os.Stdout, stdstream)
 			if err != nil {
-				panic(err) //you don't have deferred func in this program so it's fine
+				panic(err)
 			}
 		}(stdout)
 	}
@@ -72,7 +72,7 @@ func main() {
 			defer wg.Done()
 			_, err := io.Copy(os.Stderr, stdstream)
 			if err != nil {
-				panic(err) //you don't have deferred func in this program so it's fine
+				panic(err)
 			}
 		}(stderr)
 	}
@@ -81,17 +81,17 @@ func main() {
 			_, err = io.Copy(ioutil.Discard, os.Stdin)
 			cmd.Process.Kill()
 			if err != nil {
-				log.Fatal(err) //you don't have deferred func in this program so it's fine
+				log.Fatal(err)
 			}
-			os.Exit(0) //you don't have deferred func in this program so it's fine
+			os.Exit(0)
 		}()
 	}
 	if *waitstdinfl || *coutfl || *cerrfl {
 		wg.Wait()         //note you cannot remove this line and simply use cmd.Wait() to wait for EOF, because the goroutine doing stdout/stderr reading might have not started running yet. So you have a slim chance getting error "file already closed"
 		err := cmd.Wait() //>Wait waits for the command to exit and waits for any copying to stdin or copying from stdout or stderr to complete
 		if err != nil {
-			log.Fatal(err) //you don't have deferred func in this program so it's fine
+			log.Fatal(err)
 		}
-		os.Exit(0) //you don't have deferred func in this program so it's fine
+		os.Exit(0)
 	}
 }
